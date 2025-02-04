@@ -1,0 +1,128 @@
+<!DOCTYPE html>  
+<html lang="es">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Gestor de Productos</title>  
+    <style>  
+        body {  
+            font-family: Arial, sans-serif;  
+            margin: 20px;  
+            background-color: #f0f8ff; /* Azul claro */  
+            color: #333; /* Color de texto oscuro */  
+        }  
+        h1, h2 {  
+            color: #ffb711; /* Azul */  
+        }  
+        input[type="text"],  
+        input[type="file"],  
+        button {  
+            padding: 10px;  
+            margin-top: 10px;  
+            border: 1px solid #76cc2b; /* Azul */  
+            border-radius: 4px;  
+            width: 100%;  
+            box-sizing: border-box; /* Para que el padding no afecte el ancho total */  
+        }  
+        button {  
+            background-color: #f5c509; /* Azul */  
+            color: white; /* Texto blanco */  
+            cursor: pointer;  
+        }  
+        button:hover {  
+            background-color: #0056b3; /* Azul más oscuro al pasar el mouse */  
+        }  
+        .product {  
+            margin-top: 20px;  
+            padding: 15px;  
+            border: 1px solid white; /* Azul */  
+            border-radius: 4px;  
+            background-color: white; /* Fondo blanco */  
+        }  
+        img {  
+            max-width: 200px;  
+            display: block;  
+            margin: 10px 0; /* Margen superior e inferior */  
+        }  
+    </style>  
+</head>  
+<body>  
+    <h1>Gestor de Productos</h1>  
+
+    <h2>Agregar Producto</h2>  
+    <input type="text" id="productNames" placeholder="Nombre(s) del producto (separados por comas)">  
+    <input type="text" id="productDescription" placeholder="Descripción del producto">  
+    <input type="text" id="productCode" placeholder="Código del producto">  
+    <input type="file" id="productImage" accept="image/*">  
+    <button onclick="addProduct()">Agregar Producto</button>  
+
+    <h2>Buscar Producto</h2>  
+    <input type="text" id="searchName" placeholder="Nombre del producto">  
+    <button onclick="searchProduct()">Buscar</button>  
+
+    <div id="productDetail" class="product">  
+        <h2 id="productTitle"></h2>  
+        <img id="productImageDisplay" alt="">  
+        <p id="productDescriptionDisplay"></p>  
+        <p id="productCodeDisplay"></p>  
+    </div>  
+
+    <script>  
+        const products = [];  
+
+        function addProduct() {  
+            const namesInput = document.getElementById("productNames").value;  
+            const description = document.getElementById("productDescription").value;  
+            const code = document.getElementById("productCode").value;  
+            const imageFile = document.getElementById("productImage").files[0];  
+
+            // Verificar que se haya seleccionado una imagen  
+            if (!imageFile) {  
+                alert("Por favor, selecciona una imagen.");  
+                return;  
+            }  
+
+            const reader = new FileReader();  
+            reader.onload = function (e) {  
+                const imageUrl = e.target.result;  
+                const names = namesInput.split(',').map(name => name.trim().toLowerCase()); // Convertir a minúsculas  
+
+                products.push({  
+                    names: names,  
+                    description: description,  
+                    code: code,  
+                    image: imageUrl  
+                });  
+
+                // Limpiar los campos después de agregar el producto  
+                document.getElementById("productNames").value = '';  
+                document.getElementById("productDescription").value = '';  
+                document.getElementById("productCode").value = '';  
+                document.getElementById("productImage").value = '';  
+                alert("Producto agregado exitosamente.");  
+            };  
+
+            reader.readAsDataURL(imageFile);  
+        }  
+
+        function searchProduct() {  
+            const name = document.getElementById("searchName").value.trim().toLowerCase(); // Convertir a minúsculas  
+
+            // Buscar el producto usando el nombre parcial  
+            const product = products.find(p => p.names.some(n => n.includes(name)));  
+
+            if (product) {  
+                document.getElementById("productTitle").innerText = product.names.join(', ');  
+                document.getElementById("productImageDisplay").src = product.image;  
+                document.getElementById("productDescriptionDisplay").innerText = product.description;  
+                document.getElementById("productCodeDisplay").innerText = `Código: ${product.code}`;  
+                document.getElementById("productDetail").style.display = "block";  
+            } else {  
+                alert("Producto no encontrado");  
+                document.getElementById("productDetail").style.display = "none";  
+            }  
+            
+        }  
+    </script>  
+</body>  
+</html>
